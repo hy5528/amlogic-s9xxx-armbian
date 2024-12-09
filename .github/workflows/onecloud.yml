@@ -19,7 +19,7 @@ jobs:
 
       - name: Patch onecloud
         run: |          
-          cat <<EOF > ./build/config/boards/onecloud.csc
+          cat <<EOF > ./mangguo-h616-armbian/config/boards/onecloud.csc
           BOARD_NAME="OneCloud"
           BOARDFAMILY="meson8b"
           BOARD_MAINTAINER=""
