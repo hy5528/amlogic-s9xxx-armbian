@@ -1,0 +1,39 @@
+
+name: build onecloud image
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Checkout armbian/build
+        run: |
+          git clone --depth=1 --branch=master https://github.com/open-cores/mangguo-h616-armbian
+
+      - name: Patch onecloud
+        run: |          
+          cat <<EOF > ./build/config/boards/onecloud.csc
+          BOARD_NAME="OneCloud"
+          BOARDFAMILY="meson8b"
+          BOARD_MAINTAINER=""
+          BOOTCONFIG="none"
+          KERNEL_TARGET="legacy,current,edge"
+          EOF
+
+      - name: Build for onecloud
+        run: |
+          cd mangguo-h616-armbian
+          ./compile.sh build BOARD=onecloud BRANCH=current BUILD_MINIMAL=yes KERNEL_CONFIGURE=no RELEASE=jammy FORCE_CHECK_MD5_PACKAGES=no
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-images
+          path: mangguo-h616-armbian/output/images
+
